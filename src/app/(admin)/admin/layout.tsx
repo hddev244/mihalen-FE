@@ -1,8 +1,9 @@
 import Sidebar from "@/components/admin/sidebar/page";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
+
 import "./styles.css"
-import Header from "@/components/admin/header/page";
+import { Providers } from "@/app/providers";
 export const metadata: Metadata = {
     title: {
         default: "Admin-Mihalen",
@@ -11,26 +12,25 @@ export const metadata: Metadata = {
     description: "admin page"
 }
 const inter = Inter({ subsets: ["latin"] });
-let sidebarActive:number;
+let sidebarActive: number;
 export default function AdminLayout(
-    { children,login }: {
+    { children }: {
         children: React.ReactNode,
-        login : React.ReactNode,
     }) {
-        let isLoggedIn = false;
     return (
         <html lang="en">
             <body className={inter.className}>
                 <div className="flex w-dvw h-dvh bg-gray-300">
-                    <div className="w-80 h-dvh p-2 ">
-                        <div className="size-full shadow-lg bg-white rounded-md overflow-hidden border border-">
-                            <Header></Header>
-                            <Sidebar></Sidebar>
+                    <div className="w-96 h-dvh p-2 ">
+                        <div className="size-full flex flex-col justify-between shadow-lg bg-white rounded-md overflow-hidden border border-gray-400">
+                                <Sidebar></Sidebar>
                         </div>
                     </div>
-                        <main className="flex-1 p-2">
-                        <div className="size-full shadow-lg rounded-md  bg-white border">
-                         {isLoggedIn ? children : login}
+                    <main className="flex-1 p-2">
+                        <div className="size-full shadow-lg rounded-md p-6  bg-white border [&>.title]:text-2xl [&>.title]:pb-4 [&>.title]:border-b   [&>.title]:font-bold">
+                        <Providers>
+                            {children}
+                        </Providers>
                         </div>
                     </main>
                 </div>

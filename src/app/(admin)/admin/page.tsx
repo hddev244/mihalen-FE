@@ -1,11 +1,9 @@
-import type { NextPage } from "next";
+"use client"
+import Main from "./main/page";
 
-const Main: NextPage = () => {
+function AdminPage() {
   return (
-    <>
-    <h1>Main Page</h1>
-    </>
+    <Main></Main>
   )
 }
-
-export default Main
+export default AdminPage
