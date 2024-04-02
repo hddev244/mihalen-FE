@@ -2,6 +2,7 @@
 import Message from "@/components/Common/alert-message";
 import AccountInfo from "@/components/admin/account/AccountForm";
 import AccountTable from "@/components/admin/account/AccountTable";
+import RolesTable from "@/components/admin/account/RolesTable";
 import PageLogin from "@/components/admin/login/page";
 import { Account } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
@@ -31,7 +32,7 @@ function AccountsManagement() {
   return isLogged ? (
     <>
    
-      <div className="size-full">
+      <div className="flex flex-col ">
         <h1 className="title">Accounts Management</h1>
         <Tabs
           color="primary"
@@ -40,15 +41,14 @@ function AccountsManagement() {
           className=""
         >
           <Tab
-            className="size-full"
             key={TabName.ACCOUNTS}
             title={TabName.ACCOUNTS}>
-            <AccountTable></AccountTable>
+            <AccountTable ></AccountTable>
           </Tab>
           <Tab key={TabName.ROLES} title={TabName.ROLES} >
             <Card>
               <CardBody>
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                <RolesTable></RolesTable>
               </CardBody>
             </Card>
           </Tab>

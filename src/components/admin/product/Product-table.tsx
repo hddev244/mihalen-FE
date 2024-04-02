@@ -4,10 +4,9 @@ import { Button, Card, CircularProgress, Pagination, Table, TableBody, TableCell
 import { useEffect, useState } from "react";
 import { FaEdit, FaEye, FaLock, FaLockOpen } from "react-icons/fa";
 import Message from "@/components/Common/alert-message";
-import AccountInfo from "./AccountForm";
 import { BASE_API_URL } from "../../../server/api";
 
-function AccountTable() {
+function ProductTable() {
     const [accounts, setAccounts] = useState<Account[]>();
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(3);
@@ -84,7 +83,6 @@ function AccountTable() {
                     (<>
                         <div className="w-full">
                             <Button className="m-8" onClick={() => { setEditting(false) }} > Back</Button>
-                            <AccountInfo username={accountEditting} />
                         </div>
                     </>) : (
                         <>
@@ -176,4 +174,4 @@ function AccountTable() {
     </>);
 }
 
-export default AccountTable
+export default ProductTable

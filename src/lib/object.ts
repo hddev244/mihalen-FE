@@ -12,7 +12,12 @@ export type Account = {
     roles: [
         role: {
             id : string,
-            name : string
+            name? : string
         }
     ]
+}
+
+export type Category = {
+    id : string,
+    name : string,
 }
