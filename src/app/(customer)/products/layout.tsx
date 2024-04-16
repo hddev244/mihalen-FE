@@ -16,7 +16,7 @@ export default function ProductLayout({
 }>) {
     return (
         <>
-            <main className="h-full min-h-[80vh] lg:w-max w-full m-auto">
+            <main className="h-full min-h-[80vh] lg:w-max w-full m-auto lg:p-0 p-4">
                 {children}
             </main>
             <ViewedProduct />

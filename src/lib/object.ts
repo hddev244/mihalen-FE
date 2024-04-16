@@ -70,6 +70,7 @@ export interface OrderInfoSuccess {
     id : number,
     name : string,
     orderDate : string,
+    address : string,
     status : string,
     totalPrice : number,
     phoneNumber : string,

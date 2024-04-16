@@ -21,19 +21,22 @@ function OrderSuccess(
                         Thông tin đơn hàng:
                     </h2>
                     <p>
-                        Mã đơn hàng: {orderInfo?.id}
+                        <b>Mã đơn hàng:</b> {orderInfo?.id}
                     </p>
                     <p>
-                        Ngày đặt hàng: {orderInfo?.orderDate}
+                       <b> Ngày đặt hàng:</b> {orderInfo?.orderDate}
                     </p>
                     <p>
-                        Tổng tiền: {orderInfo?.totalPrice}
+                        <b>Tổng tiền:</b> {orderInfo?.totalPrice}
                     </p>
                     <p>
-                        Số điện thoại: {orderInfo?.phoneNumber}
+                        <b>Tên khách hàng:</b> {orderInfo?.name}
                     </p>
                     <p>
-                        Tên khách hàng: {orderInfo?.name}
+                        <b>Số điện thoại:</b> {orderInfo?.phoneNumber}
+                    </p>
+                    <p>
+                        <b>Địa chỉ nhận hàng:</b> {orderInfo?.address}
                     </p>
                     <div className="flex justify-end">
                         <button onClick={close} className="bg-green-500 text-white px-4 py-2 rounded-md">Đóng</button>

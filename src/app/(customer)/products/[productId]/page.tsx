@@ -51,9 +51,9 @@ function Page({ params }: {
                     {product.name}
                 </Link>
             </div>
-            <div className="grid grid-cols-2 my-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 my-8">
                 {/* image  */}
-                <div>
+                <div className="w-full aspect-square">
                     <ProductDetailCarousel images={product.images || []} />
                 </div>
                 <div className="flex flex-col space-y-10">
@@ -87,7 +87,7 @@ function Page({ params }: {
                         <div className="border border-dashed border-red-500 relative">
                             <div className="absolute translate-y-[-50%] bg-white left-4">
                                 <BiGift className="text-red-500 text-2xl me-2 inline" />
-                                <span className="text-red-500 text-xl uppercase">Khuyến mãi - ưu đãi </span>   
+                                <span className="text-red-500 text-xl uppercase">Khuyến mãi - ưu đãi </span>
                             </div>
                             <ol className="px-10 py-6 list-disc">
                                 <li>Giảm giá 50% cho tất cả sản phẩm</li>
@@ -96,9 +96,9 @@ function Page({ params }: {
                                 <li>Đổi trả trong 30 ngày nếu sản phẩm lỗi bất kì</li>
                             </ol>
                         </div>
-                        
+
                     </div>
-                        <AddToCartAndBuynow productId={product.id||0}/>
+                    <AddToCartAndBuynow productId={product.id || 0} />
                 </div>
             </div>
         </>

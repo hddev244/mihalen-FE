@@ -19,7 +19,7 @@ function ProductDetailCarousel(props: Props) {
   
     return (
         <>
-        <div className='space-y-4 p-8 pt-0 w-full'>
+        <div className='space-y-4 md:p-8 pt-0 w-full'>
             <div className='w-full'>
                 <Swiper
                   loop={true}
