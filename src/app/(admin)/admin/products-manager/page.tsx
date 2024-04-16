@@ -36,9 +36,9 @@ function ProductsManagement() {
             key={"all-products"}
             title={"All Products"}>
             <Card>
-              <CardBody>
+              
                 <ProductTable></ProductTable>
-              </CardBody>
+              
             </Card>
           </Tab>
           <Tab key={"Create Product"} title={"Create Product"} >

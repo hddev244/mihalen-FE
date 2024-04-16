@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaEye, FaLock, FaLockOpen } from "react-icons/fa";
 import Message from "@/components/Common/alert-message";
 import AccountInfo from "./AccountForm";
-import { BASE_API_URL } from "../../../server/api";
+import { BASE_API_URL } from "../../../api/api-info";
 
 function AccountTable() {
     const [accounts, setAccounts] = useState<Account[]>();
@@ -15,7 +15,6 @@ function AccountTable() {
     const [isEditting, setEditting] = useState(false);
     const [accountEditting, setAccountEditting] = useState("");
     const [checkDelete, setCheckDelete] = useState(true)
-    const [token, setToken] = useState("");
     const [message, setMessage] = useState<string>();
     const [showMessage, setShowMessage] = useState(false);
 
@@ -23,14 +22,15 @@ function AccountTable() {
         if (typeof window !== 'undefined') {
             const storedToken = localStorage.getItem(Localstorage.TOKEN);
             if (storedToken) { // Kiểm tra nếu token tồn tại trước khi gửi yêu cầu 
+                console.log(storedToken)
                 const fetchData = async () => {
                     try {
+
                         const url = `${BASE_API_URL}/api/admin/accounts/pages?index=${currentPage - 1}&size=${pageSize}`;
-                        setToken(`Bearer ${storedToken}`);
                         const response = await fetch(url, {
                             method: "GET",
                             headers: {
-                                "Authorization": token,
+                                "authorization": storedToken,
                             }
                         });
                         const responseData = await response.json();
@@ -53,13 +53,14 @@ function AccountTable() {
 
     const handleLockedAccount = (id: number, isLocked: boolean) => {
         const fetchData = async () => {
+            const storedToken = localStorage.getItem(Localstorage.TOKEN);
+            if (storedToken) {
             try {
                 const url = `${BASE_API_URL}/api/admin/account/lock/${id}`;
-                console.log(token)
                 const response = await fetch(url, {
                     method: "PUT",
                     headers: {
-                        "Authorization": token,
+                        "Authorization": storedToken,
                     }
                 });
                 setCheckDelete(!checkDelete);
@@ -72,7 +73,7 @@ function AccountTable() {
                 }
             } catch (error) {
                 console.log(error);
-            }
+            }}
         };
         fetchData();
     }
@@ -111,9 +112,14 @@ function AccountTable() {
                                                     <TableCell>{data.username}</TableCell>
                                                     <TableCell>{data.fullname}</TableCell>
                                                     <TableCell>{data.email}</TableCell>
-                                                    <TableCell>CEO</TableCell>
-                                                    <TableCell>{data.locked ? "Locked" : "Active"}</TableCell>
-                                                    <TableCell> <div className="relative flex items-center gap-2">
+                                                    <TableCell>
+                                                            { data ? (data.roles.map((role) => {
+                                                                    return role.name + " ";
+                                                                })) : ("")
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell>{data.locked ? "Locked" : "Active"}</TableCell>
+                                                        <TableCell> <div className="relative flex items-center gap-2">
                                                         <Tooltip content="Details">
                                                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                                                                 <FaEye />

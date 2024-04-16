@@ -1,26 +1,29 @@
 import Message from "@/components/Common/alert-message";
-import { Category } from "@/lib/object";
+import { Category, MessageType } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
-import { BASE_API_URL } from "@/server/api";
+import { BASE_API_URL } from "@/api/api-info";
 import { Button, Card, CircularProgress, Input, Select, SelectItem, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { BiReset, BiSave } from "react-icons/bi";
 import { FaEdit, FaEye } from "react-icons/fa";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import { RiImageAddFill } from "react-icons/ri";
 
 function CategoryForm() {
     const [id, setId] = useState("")
     const [name, setName] = useState("")
+    const [thumbnail, setThumbnail] = useState<File>();
     const [errors, setErrors] = useState<any>({});
     const [message, setMessage] = useState<string>();
     const [showMessage, setShowMessage] = useState(false);
+    const [messageType, setMessageType] = useState<MessageType>("success");
 
 
     const [categories, setCategories] = useState<Category[]>();
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(3);
+    const [pageSize, setPageSize] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
-    const [checkDelete, setCheckDelete] = useState(true)
     const [token, setToken] = useState("");
 
 
@@ -30,13 +33,11 @@ function CategoryForm() {
             if (storedToken) { // Kiểm tra nếu token tồn tại trước khi gửi yêu cầu 
                 const fetchData = async () => {
                     try {
-                        const url = `${BASE_API_URL}/api/admin/category/pages?index=${currentPage - 1}&size=${pageSize}`;
+                        const url = `${BASE_API_URL}/api/admin/categories/pages?index=${currentPage - 1}&size=${pageSize}`;
                         setToken(`Bearer ${storedToken}`);
                         const response = await fetch(url, {
                             method: "GET",
-                            headers: {
-                                "Authorization": token,
-                            }
+
                         });
                         const responseData = await response.json();
                         const categoriesContent = await responseData.data.content;
@@ -49,7 +50,7 @@ function CategoryForm() {
                 fetchData();
             }
         }
-    }, [currentPage, pageSize, checkDelete]);
+    }, [currentPage, pageSize]);
 
 
     const validateForm = () => {
@@ -70,44 +71,69 @@ function CategoryForm() {
             const storedToken = localStorage.getItem(Localstorage.TOKEN);
             if (storedToken) { // Kiểm tra nếu token tồn tại trước khi gửi yêu cầu 
                 const fetchData = async () => {
+                    if(thumbnail === undefined){
+                        setMessage("Please choose image");
+                        setMessageType("error");
+                        setShowMessage(true);
+                        setTimeout(() => {
+                            setShowMessage(false);
+                        }, 2000);
+                        return;
+                    }
+
                     const dataPost = {
                         id: id,
                         name: name,
                     }
-                    const dataJson = JSON.stringify(dataPost);
+                    let formData = new FormData();
+                    formData.append("category", JSON.stringify(dataPost));
+                    formData.append("thumbnail", thumbnail);
                     try {
-                        const url = `${BASE_API_URL}/api/admin/category`;
+                        const url = `${BASE_API_URL}/api/admin/categories`;
                         const response = await fetch(url, {
                             method: "POST",
                             headers: {
                                 "Authorization": storedToken,
-                                "Content-Type": "application/json" // Add Content-Type header
                             },
-                            body: dataJson
+                            body: formData
                         });
 
                         const resJson = await response.json();
                         if (response.ok) {
+                            setMessage(resJson.message);
+                            setMessageType("success");
                             setShowMessage(true);
-                            setTimeout(() => {
-                                setShowMessage(false);
-                            }, 2000);
                         } else {
+                            setMessage(resJson.message);
+                            setMessageType("error");
                             setShowMessage(true);
-                            setTimeout(() => {
-                                setShowMessage(false);
-                            }, 2000);
                         }
                         setMessage(resJson.message);
 
                     } catch (error) {
                         console.log(error)
-                        setMessage("Lỗi kết nối máy chủ!");
+                        if ((error as any)?.response?.status === 401) {
+                            localStorage.removeItem(Localstorage.TOKEN);
+                            setMessage("Token expired, please login again");
+                        }
+                        if ((error as any)?.status === 400) {
+                            setMessage("Category already exists");
+                        }
+                        if ((error as any)?.status === 500) {
+                            setMessage("Server error")
+                        }
+                        if ((error as any)?.status === 404) {
+                            setMessage("Category not found");
+                        }
+                        if ((error as any).status === 403) {
+                            setMessage("You do not have permission to access this resource");
+                        }
+                        setMessageType("error");
                         setShowMessage(true);
-                        setTimeout(() => {
-                            setShowMessage(false);
-                        }, 2000);
                     }
+                    setTimeout(() => {
+                        setShowMessage(false);
+                    }, 2000);
                 };
                 fetchData();
             }
@@ -120,44 +146,71 @@ function CategoryForm() {
     };
     return (
         <>
-            {showMessage && (<Message message={message} />)}
+            {showMessage && (<Message message={message} type={messageType} />)}
             <h1 className="text-center text-3xl p-4 text-primary-500 font-semibold">Category</h1>
-            <form className="w-1/2  justify-center gap-2 m-auto">
-                <div className="space-y-2 ">
-                    <Input variant="bordered"
-                        type="text" size="lg"
-                        onChange={(e) => setId(e.target.value)}
-                        value={id}
-                        isRequired
-                        label="Category ID"
-                        errorMessage={errors.id}
-                        placeholder="Enter product name" />
-                    <Input variant="bordered"
-                        type="text" size="lg"
-                        onChange={(e) => setName(e.target.value)}
-                        value={name}
-                        isRequired
-                        label="Category name"
-                        errorMessage={errors.name}
-                        placeholder="Enter name" />
-
-                    <div className="flex justify-center space-x-2 p-4 ">
-                        <Button onClick={() => { handleCreate(); }} color="secondary">
-                            <BiSave />
-                            Create
-                        </Button>
-                        <Button onClick={() => { handleCreate(); }} color="success">
-                            <BiSave />
-                            Update
-                        </Button>
-                        <Button onClick={() => resetForm()} color="default">
-                            <BiReset />
-                            Clear
-                        </Button>
+           <div className="grid grid-cols-2">
+                <form className="w-1/2  justify-center gap-2 m-auto">
+                    <div className="space-y-2 ">
+                        <Input variant="bordered"
+                            type="text" size="lg"
+                            onChange={(e) => setId(e.target.value)}
+                            value={id}
+                            isRequired
+                            label="Category ID"
+                            errorMessage={errors.id}
+                            placeholder="Enter product name" />
+                        <Input variant="bordered"
+                            type="text" size="lg"
+                            onChange={(e) => setName(e.target.value)}
+                            value={name}
+                            isRequired
+                            label="Category name"
+                            errorMessage={errors.name}
+                            placeholder="Enter name" />
+    
+                        <div className="flex justify-center space-x-2 p-4 ">
+                            <Button onClick={() => { handleCreate(); }} color="secondary">
+                                <BiSave />
+                                Create
+                            </Button>
+                            <Button onClick={() => { handleCreate(); }} color="success">
+                                <BiSave />
+                                Update
+                            </Button>
+                            <Button onClick={() => resetForm()} color="default">
+                                <BiReset />
+                                Clear
+                            </Button>
+                        </div>
+                        <hr />
                     </div>
-                    <hr />
+                </form>
+                <div className='grid grid-cols-4 gap-2 p-4'>
+                   {thumbnail && 
+                         <div className='aspect-square border bg-slate-200 relative'>
+                            <img src={URL.createObjectURL(thumbnail)} alt='image' className='w-full h-full object-cover' />
+                         <button
+                            // onClick={() => {
+                            //     const newFiles = files.filter((f, i) => i !== index);
+                            //     setFiles(newFiles);
+                            // }}
+                            className='absolute right-2 top-2'><IoCloseCircleOutline /></button>
+                        </div>
+                     }
+                    <div className='aspect-square border text-7xl text-gray-600 flex items-center justify-center'>
+                    <input 
+                        onChange={(e) => {
+                            if (e.target.files) {
+                                setThumbnail(e.target.files[0]);
+                            }
+                        }} 
+                        accept="image/*"
+                        type='file' id='imagesPro' 
+                        className='hidden' />
+                    <label className='hover:cursor-pointer ' htmlFor="imagesPro"><RiImageAddFill /></label>
+                    </div>
                 </div>
-            </form>
+           </div>
             {/* {showMessage && (<Message message={message} />)} */}
             {categories ? (<>
                 <Table color="secondary"

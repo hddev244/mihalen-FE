@@ -4,7 +4,7 @@ import { Localstorage } from "@/lib/store";
 import { Button, Card, Checkbox, Input, Skeleton, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { BiCloset, BiReset, BiSave } from "react-icons/bi";
-import { BASE_API_URL } from "@/server/api";
+import { BASE_API_URL } from "@/api/api-info";
 
 function AccountInfo(
     { username }: { username?: string }
@@ -40,17 +40,6 @@ function AccountInfo(
         } else if (!/\S+@\S+\.\S+/.test(email)) {
             errors.email = 'Email is invalid';
         }
-
-        // if (!password.trim()) {
-        //     errors.password = 'Password is required';
-        // } else if (formData.password.length < 6) {
-        //     errors.password = 'Password must be at least 6 characters long';
-        // }
-
-        // if (formData.password !== formData.confirmPassword) {
-        //     errors.confirmPassword = 'Passwords do not match';
-        // }
-
         return errors;
     };
 

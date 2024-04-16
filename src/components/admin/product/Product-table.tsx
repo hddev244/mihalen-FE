@@ -1,30 +1,43 @@
-import { Account } from "@/lib/object";
+import { Account, Product } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
 import { Button, Card, CircularProgress, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { FaEdit, FaEye, FaLock, FaLockOpen } from "react-icons/fa";
 import Message from "@/components/Common/alert-message";
-import { BASE_API_URL } from "../../../server/api";
+import { BASE_API_URL } from "../../../api/api-info";
+import { FaDeleteLeft } from "react-icons/fa6";
+import ProductEdit from "./product-edit/ProductEdit";
+import { getImage } from "@/lib/imageUtil";
 
 function ProductTable() {
-    const [accounts, setAccounts] = useState<Account[]>();
+    const [products, setProducts] = useState<Product[]>();
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(3);
+    const [pageSize, setPageSize] = useState(1000);
     const [totalPages, setTotalPages] = useState(0);
-    const [isEditting, setEditting] = useState(false);
     const [accountEditting, setAccountEditting] = useState("");
     const [checkDelete, setCheckDelete] = useState(true)
     const [token, setToken] = useState("");
     const [message, setMessage] = useState<string>();
     const [showMessage, setShowMessage] = useState(false);
+    const [product, setProduct] = useState<Product>();
+    
+    const [isEditting, setEditting] = useState(false);
+    const [productEditting, setProductEditting] = useState<Product>({
+        id: 0,
+        name: "",
+        price: 0,
+        createDate: "",
+        modifiDate: "",
+        category: { id: "", name: "" }, 
+    });
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const storedToken = localStorage.getItem(Localstorage.TOKEN);
-            if (storedToken) { // Kiểm tra nếu token tồn tại trước khi gửi yêu cầu 
-                const fetchData = async () => {
+            if (storedToken) {
+                const fetchData = async (retry = 3) => {
                     try {
-                        const url = `${BASE_API_URL}/api/admin/accounts/pages?index=${currentPage - 1}&size=${pageSize}`;
+                        const url = `${BASE_API_URL}/api/product/pages?index=${currentPage - 1}&size=${pageSize}`;
                         setToken(`Bearer ${storedToken}`);
                         const response = await fetch(url, {
                             method: "GET",
@@ -32,12 +45,34 @@ function ProductTable() {
                                 "Authorization": token,
                             }
                         });
-                        const responseData = await response.json();
-                        const accs: Account[] = await responseData.content;
-                        setTotalPages(responseData.totalPages);
-                        setAccounts(accs);
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            setProducts(responseData.data.content);
+                            setTotalPages(responseData.totalPages);
+                            console.log(responseData.data.content);
+                        } else {
+                            // console.log("error");
+                            // if (retry > 0) {
+                            //     setTimeout(() => fetchData(retry - 1), 3000); // Retry after 3 seconds
+                            // } else {
+                            //     setMessage("Error when fetching data");
+                            //     setShowMessage(true);
+                            //     setTimeout(() => {
+                            //         setShowMessage(false);
+                            //     }, 2000);
+                            // }
+                        }
                     } catch (error) {
                         console.log(error);
+                        if (retry > 0) {
+                            setTimeout(() => fetchData(retry - 1), 3000); // Retry after 3 seconds
+                        } else {
+                            setMessage("Error when fetching data");
+                            setShowMessage(true);
+                            setTimeout(() => {
+                                setShowMessage(false);
+                            }, 2000);
+                        }
                     }
                 };
                 fetchData();
@@ -45,48 +80,68 @@ function ProductTable() {
         }
     }, [currentPage, pageSize, checkDelete]);
 
-    const handleEdit = (username: string) => {
-        setAccountEditting(username)
+    const handleEdit = (product: Product) => {
+        setProductEditting(product);
         setEditting(true);
     }
 
-    const handleLockedAccount = (id: number, isLocked: boolean) => {
-        const fetchData = async () => {
-            try {
-                const url = `${BASE_API_URL}/api/admin/account/lock/${id}`;
-                console.log(token)
-                const response = await fetch(url, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": token,
-                    }
-                });
-                setCheckDelete(!checkDelete);
-                if (response.ok) {
-                    setMessage(isLocked ? "Mở khóa tài khoản thành công!" : "Khóa tài khoản thành công!");
-                    setShowMessage(true);
-                    setTimeout(() => {
-                        setShowMessage(false);
-                    }, 2000);
+    const handleDelete = async (id: number) => {
+        const url = `${BASE_API_URL}/api/product/${id}`;
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": token,
                 }
-            } catch (error) {
-                console.log(error);
+            });
+            if (response.ok) {
+                setCheckDelete((prev) => !prev);
+                setMessage("Delete success");
+                setShowMessage(true);
+                setTimeout(() => {
+                    setShowMessage(false);
+                }, 2000);
+            } else {
+                setMessage("Delete fail");
+                setShowMessage(true);
+                setTimeout(() => {
+                    setShowMessage(false);
+                }, 2000);
             }
-        };
-        fetchData();
+        } catch (error) {
+            console.log(error);
+            setMessage("Delete fail");
+            setShowMessage(true);
+            setTimeout(() => {
+                setShowMessage(false);
+            }, 2000);
+        }
+    }
+    const formatDate = (date: Date | null | undefined | string) => {
+        if (!date || undefined) return "";
+        const formattedDate = new Date(date).toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        return formattedDate.replace(',', '/');
     }
 
-    return accounts ? (
+    return products ? (
         <>
-            <Card className="flex size-full flex-col items-center p-4">
+            {showMessage && (<Message message={message} />)}
+            {<Card className="flex size-full flex-col items-center p-4">
                 {isEditting ?
                     (<>
                         <div className="w-full">
                             <Button className="m-8" onClick={() => { setEditting(false) }} > Back</Button>
+                            <ProductEdit data={productEditting} />
                         </div>
                     </>) : (
                         <>
-                            {showMessage && (<Message message={message} />)}
+                            {showMessage && (<Message message={message} />)} 
                             <Table color="secondary"
                                 aria-label="Account table"
                                 selectionMode="single"
@@ -94,45 +149,50 @@ function ProductTable() {
                                 }
                             >
                                 <TableHeader>
+                                    <TableColumn>ID</TableColumn>
                                     <TableColumn>NAME</TableColumn>
-                                    <TableColumn>FULLNAME</TableColumn>
-                                    <TableColumn>EMAIL</TableColumn>
+                                    <TableColumn>Price</TableColumn>
                                     <TableColumn>ROLE</TableColumn>
                                     <TableColumn>STATUS</TableColumn>
+                                    <TableColumn>image</TableColumn>
                                     <TableColumn> ACTION </TableColumn>
                                 </TableHeader>
                                 <TableBody>
                                     {//rander row of account
-                                        accounts.map((data) => {
+                                        products.map((product) => {
                                             return (
-                                                <TableRow key={data.id}>
-                                                    <TableCell>{data.username}</TableCell>
-                                                    <TableCell>{data.fullname}</TableCell>
-                                                    <TableCell>{data.email}</TableCell>
-                                                    <TableCell>CEO</TableCell>
-                                                    <TableCell>{data.locked ? "Locked" : "Active"}</TableCell>
-                                                    <TableCell> <div className="relative flex items-center gap-2">
-                                                        <Tooltip content="Details">
-                                                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                                <FaEye />
-                                                            </span>
-                                                        </Tooltip>
-                                                        <Tooltip content="Edit user">
-                                                            <span onClick={() => { handleEdit(data.username) }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                                <FaEdit />
-                                                            </span>
-                                                        </Tooltip>
-                                                        <Tooltip color="primary" content={data.locked ? "unlock account" : "lock account"}>
-                                                            {data.locked ? (<span onClick={() => handleLockedAccount(data.id, data.locked)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                                <FaLock />
-                                                            </span>)
-                                                                :
-                                                                (<span onClick={() => handleLockedAccount(data.id, data.locked)} className="text-lg text-primary-500 cursor-pointer active:opacity-50">
-                                                                    <FaLockOpen />
+                                                <TableRow key={product.id}>
+                                                    <TableCell>{product.id}</TableCell>
+                                                    <TableCell>{product.name}</TableCell>
+                                                    <TableCell>{product.price}</TableCell>
+                                                    <TableCell>{formatDate(product.createDate) || ""}</TableCell>
+                                                    <TableCell>{formatDate(product.modifiDate) || ""}</TableCell>
+                                                    <TableCell>
+                                                        {product.thumbnail && <img 
+                                                                            src={product.thumbnail.id?getImage(product.thumbnail.id):""}
+                                                                            alt={product.name}
+                                                                            style={{ width: "70px", height: "70px" }}
+                                                        />}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="relative flex items-center gap-2">
+                                                            <Tooltip content="Details">
+                                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                                                    <FaEye />
                                                                 </span>
-                                                                )}
-                                                        </Tooltip>
-                                                    </div></TableCell>
+                                                            </Tooltip>
+                                                            <Tooltip content="Edit user">
+                                                                <span onClick={() => { handleEdit(product) }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                                                    <FaEdit />
+                                                                </span>
+                                                            </Tooltip>
+                                                            <Tooltip color="primary" >
+                                                                <span onClick={() => { handleDelete(product.id ?? 0) }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                                                    <FaDeleteLeft />
+                                                                </span>
+                                                            </Tooltip>
+                                                        </div>
+                                                    </TableCell>
                                                 </TableRow>
                                             );
                                         })}
@@ -164,7 +224,7 @@ function ProductTable() {
                                 </div>
                             </div>
                         </>)}
-            </Card>
+            </Card>}
 
         </>
     ) : (<>
