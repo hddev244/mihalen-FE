@@ -11,16 +11,6 @@ import { BiGift } from "react-icons/bi";
 import { FaFire } from "react-icons/fa";
 
 
-let product: Product = {
-    id: 0,
-    price: 0,
-    description: "",
-    category: {
-        id: "",
-        name: ""
-    },
-    name: "",
-};
 
 function Page({ params }: {
     params: {
@@ -28,21 +18,27 @@ function Page({ params }: {
     }
 }) {
     const [showView,setShowView] =useState(true);
-    const fetchProduct = async (): Promise<void> => {
-        const fetchUrl = `${BASE_API_URL}/api/product/findById/${params.productId}`;
-        const res = await fetch(fetchUrl);
-        const resData = await res.json();
-        product = resData.data;
-    }
+    const [product, setProduct] = useState<Product>();
+    useEffect(() => {
+        const fetchProduct = async (): Promise<void> => {
+            const fetchUrl = `${BASE_API_URL}/api/product/findById/${params.productId}`;
+            const res = await fetch(fetchUrl);
+            const resData = await res.json();
+            console.log(resData);
+            const  product = resData.data;
+            setProduct(product);
+        }
+
+        fetchProduct();
+    }   ,[]);
     const show = () => {
         setShowView(false);
     }
-    fetchProduct();
-    return showView&&(
+    return showView && product &&(
         <>
             <MarkClickToBack />
             {/* <div className="fixed bg-[#50505056] w-dvw z-[99999] h-dvh top-0 left-0 flex justify-center items-center"> */}
-                <div className="bg-white w-[80%] max-h-[90vh] overflow-y-auto p-4 z-[999999] rounded-lg fixed translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%]">
+                <div className="bg-white w-[80%] lg:w-max max-h-[90vh] overflow-y-auto p-4 z-[999999] rounded-lg fixed translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%]">
                     <div className="grid grid-cols-1 md:grid-cols-2 ">
                         {/* image  */}
                         <div className="w-full aspect-square">
@@ -79,6 +75,12 @@ function Page({ params }: {
                                     <span className="text-3xl font-semibold text-red-500">{formatCurrency(product.price)} đ</span>
                                     <span className="line-through text-gray-500">{formatCurrency(product.price * 2)} đ</span>
                                 </div>
+                                <button
+                                    onClick={() => {
+                                        window.location.reload();
+                                    }}
+                                    className=" italic text-blue-500 text-xl">xem chi tiết</button>
+                            
                                 <div className="border border-dashed border-red-500 relative  hidden md:block">
                                     <div className="absolute translate-y-[-50%] bg-white left-4">
                                         <BiGift className="text-red-500 text-2xl me-2 inline" />
