@@ -1,3 +1,4 @@
+"use client"
 import { BASE_API_URL } from "@/api/api-info";
 import AddToCartAndBuynow, { MarkClickToBack } from "@/components/Common/SetQuantity";
 import ProductDetailCarousel from "@/components/products/Product-Detail-Carousel";
@@ -5,7 +6,7 @@ import { formatCurrency } from "@/lib/format";
 import { Product } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
 import { Progress } from "@nextui-org/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BiGift } from "react-icons/bi";
 import { FaFire } from "react-icons/fa";
 
@@ -26,19 +27,22 @@ function Page({ params }: {
         productId: number
     }
 }) {
+    const [showView,setShowView] =useState(true);
     const fetchProduct = async (): Promise<void> => {
         const fetchUrl = `${BASE_API_URL}/api/product/findById/${params.productId}`;
         const res = await fetch(fetchUrl);
         const resData = await res.json();
-        console.log(resData);
         product = resData.data;
     }
+    const show = () => {
+        setShowView(false);
+    }
     fetchProduct();
-    return (
+    return showView&&(
         <>
             <MarkClickToBack />
             {/* <div className="fixed bg-[#50505056] w-dvw z-[99999] h-dvh top-0 left-0 flex justify-center items-center"> */}
-                <div className="bg-white w-[80%] max-h-[90vh] overflow-y-auto p-4 z-[99999] rounded-lg fixed translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%]">
+                <div className="bg-white w-[80%] max-h-[90vh] overflow-y-auto p-4 z-[999999] rounded-lg fixed translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%]">
                     <div className="grid grid-cols-1 md:grid-cols-2 ">
                         {/* image  */}
                         <div className="w-full aspect-square">
@@ -89,7 +93,7 @@ function Page({ params }: {
                                 </div>
 
                             </div>
-                            <AddToCartAndBuynow productId={product.id || 0} />
+                            <AddToCartAndBuynow productId={product.id || 0} show={show} />
                         </div>
                     </div>
                 </div>

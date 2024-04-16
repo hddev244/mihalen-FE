@@ -6,7 +6,7 @@ import { Localstorage } from '@/lib/store';
 import { MessageType } from '@/lib/object';
 import { useRouter } from 'next/navigation';
 
-function AddToCartAndBuynow({ productId }: { productId: number }) {
+function AddToCartAndBuynow({ productId,show }: { productId: number,show?():void }) {
     const [qty, setQty] = useState(1);
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState<MessageType>();
@@ -74,13 +74,16 @@ function AddToCartAndBuynow({ productId }: { productId: number }) {
     }
 
     const handleBuyNow = () => {
+        if (show) {
+            show();
+        }
         handleAddToCart();
         rounter.push('/cart');
     }
     return (
         <>
             {showMessage && <Message message={message} type={messageType} />}
-            <div className="grid grid-cols-12 gap-4">
+            <div className="grid grid-cols-12 gap-4 z-[999998]">
                 <div className="border-red-600 flex justify-between items-center  rounded-md border col-span-4 p-2 ">
                     <button onClick={handleDecrement} className="aspect-square h-full text-lg">-</button>
                     <span>{qty}</span>
@@ -104,7 +107,7 @@ const MarkClickToBack = () => {
             onClick={() => {
                 window.history.back();
             }}
-            className="fixed bg-[#50505056] w-dvw z-[999] h-dvh top-0 left-0">
+            className="fixed bg-[#50505056] w-dvw z-[999998] h-dvh top-0 left-0">
         </div>
     )
 }
