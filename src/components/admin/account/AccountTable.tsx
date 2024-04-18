@@ -120,11 +120,7 @@ function AccountTable() {
                                                         </TableCell>
                                                         <TableCell>{data.locked ? "Locked" : "Active"}</TableCell>
                                                         <TableCell> <div className="relative flex items-center gap-2">
-                                                        <Tooltip content="Details">
-                                                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                                <FaEye />
-                                                            </span>
-                                                        </Tooltip>
+
                                                         <Tooltip content="Edit user">
                                                             <span onClick={() => { handleEdit(data.username) }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                                                                 <FaEdit />

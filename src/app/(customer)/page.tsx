@@ -18,8 +18,8 @@ export default function Home({
 }: Readonly<{
   productView: React.ReactNode;
 }>) {
-  const [categories, setCategories] = useState<Category[]>();
   const [products, setProducts] = useState<Product[]>();
+  const [categories, setCategories] = useState<Category[]>();
   useEffect(() => {
     const fetchCategories = async () => {
       const res = await fetch(`${BASE_API_URL}/api/admin/categories/pages?index=0&size=10`);
@@ -60,8 +60,12 @@ export default function Home({
           <p className="text-center text-xl font-semibold">DANH MỤC SẢN PHẨM</p>
           <div className="grid sm:grid-cols-4 gap-8 lg:grid-cols-6 grid-cols-2 p-4  ">
             {categories && categories?.map((item) => (
-              <Link href={`/products/category/${item.id}`} className="hover:scale-110 hover:cursor-pointer transition-transform duration-300 ease-in-out">
-                <img src={item.thumbnail?.id ? getImage(item.thumbnail.id) : ''} alt={item.name}
+              <Link key={item.id} href={`/products/category/${item.id}`} className="hover:scale-110 hover:cursor-pointer transition-transform duration-300 ease-in-out">
+                <Image 
+                  src={item.thumbnail?.id ? getImage(item.thumbnail.id) : ''} 
+                  width={200}
+                  height={200}
+                  alt={item.name}
                   className="w-full aspect-square object-cover rounded-full border shadow-lg" />
                 <h3 className="text-lg font-semibold pt-4 text-center">{item.name}</h3>
                 <p className="text-center">8 sản phẩm</p>
@@ -93,6 +97,7 @@ export default function Home({
         <section className="grid md:grid-cols-3 gap-8 lg:grid-cols-4 grid-cols-2 p-4  ">
           {products && products.map((item) => (
             <CardProductItem
+              key={item.id}
               id={item.id ?? 0}
               name={item.name}
               price={item.price}
@@ -105,9 +110,10 @@ export default function Home({
           <Image
             src={banner_2}
             className="aspect-[3] py-4 object-cover w-full"
-            alt="banner-1"
-
-            layout="responsive" />
+            alt="banner-2"
+            width={1920}
+            height={1080}
+             />
           {/* Sản phẩm bán chạy */}
           <div className="flex justify-between items-center px-2 pt-4">
             <h2 className="md:text-3xl text-2xl font-semibold text-themeColor">Sản phẩm bán chạy</h2>
@@ -116,6 +122,7 @@ export default function Home({
           <div className="grid md:grid-cols-3 gap-8 lg:grid-cols-4 grid-cols-2 p-4  ">
           {products && products.map((item) => (
             <CardProductItem
+              key={item.id}
               id={item.id ?? 0}
               name={item.name}
               price={item.price}

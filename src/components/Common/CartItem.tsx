@@ -1,6 +1,7 @@
 import type { CartItem } from '@/lib/object';
 import { height } from '@fortawesome/free-brands-svg-icons/fa42Group';
 import { Skeleton } from '@nextui-org/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { Suspense } from 'react';
 import { BiCartAdd } from 'react-icons/bi';
@@ -19,7 +20,7 @@ function CartItem(props: CardItemProps) {
         <div className='w-full bg-red-200 flex p-2 rounded-lg border relative'
             style={{height: props.size ? props.size+"px" : "132px"}}
         >
-            <img className='aspect-square h-full rounded-lg object-cover' src={`https://picsum.photos/200/300?random=${props.cartItem?.quantity}`} alt={props.cartItem?.product.name} />
+            <Image className='aspect-square h-full rounded-lg object-cover' src={`https://picsum.photos/200/300?random=${props.cartItem?.quantity}`} alt={props.cartItem?.product.name||""} />
             <div className='w-2/3 h-full flex flex-col justify-center items-center'>
                 <h3>{props.cartItem?.product.name}</h3>
                 <p>Price: {props.cartItem?.product.price || 0} vnđ</p>

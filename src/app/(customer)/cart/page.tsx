@@ -9,6 +9,7 @@ import { CartItem, MessageType, OrderInfoSuccess, Product } from '@/lib/object';
 import { Localstorage } from '@/lib/store';
 import { Card, CardHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { RiDeleteBin6Fill } from 'react-icons/ri';
 
@@ -217,13 +218,15 @@ function CartPage() {
                                             return (
                                                 <TableRow key={item.id}>
                                                     <TableCell>
-                                                        <img
-                                                            className='w-20 h-20 object-cover'
+                                                        <Image
+                                                            width={80}
+                                                            height={80}
+                                                            className='size-14 object-cover'
                                                             src={getImage(item.product.thumbnail?.id ?? 0)} alt='product' />
                                                     </TableCell>
                                                     <TableCell>
                                                         <p>{item.product.name}</p>
-                                                        <p>{item.product.description}</p>
+                                                        <p className='line-clamp-2'>{item.product.description}</p>
                                                         <button className='text-red-500 text-lg '
                                                         ><RiDeleteBin6Fill />
                                                         </button>

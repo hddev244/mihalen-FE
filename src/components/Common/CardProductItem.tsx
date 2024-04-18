@@ -9,6 +9,7 @@ import { BiCartAdd } from 'react-icons/bi';
 import { BsEye } from 'react-icons/bs';
 import Message from './alert-message';
 import { MessageType } from '@/lib/object';
+import Image from 'next/image';
 
 interface CardItemProps {
     id: number;
@@ -103,7 +104,9 @@ function CardProductItem({ id, name, price, thumbnail }: CardItemProps) {
                         <div className=" h-fullrounded-lg bg-default-300"></div>
                     </Skeleton>
                 }>
-                    <img
+                    <Image
+                        width={200}
+                        height={200}
                         className='w-full aspect-square object-cover border '
                         src={thumbnail ? thumbnail : 'https://via.placeholder.com/150'}
                         alt={name} />

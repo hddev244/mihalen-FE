@@ -12,7 +12,13 @@ import CardProductItem from "../Common/CardProductItem";
 import { Localstorage } from "@/lib/store";
 
 
-const products: any[] = Localstorage.VIEWED_PRODUCTS ? JSON.parse(localStorage.getItem(Localstorage.VIEWED_PRODUCTS) || "[]") : [];
+let products: any[] =[];
+if (typeof window !== "undefined") {
+    require('swiper/css/navigation');
+    require('swiper/css/pagination');
+    require('swiper/css');
+    products = Localstorage.VIEWED_PRODUCTS ? JSON.parse(localStorage.getItem(Localstorage.VIEWED_PRODUCTS) || "[]") : [];
+}
 function ViewedProduct() {
     return (
         <div className="w-full lg:w-max m-auto py-10 px-4">

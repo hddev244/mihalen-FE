@@ -72,7 +72,7 @@ function AccountInfo(
             }
             fetchData();
         }
-    }, [])
+    }, [username])
 
     function handleUpdateAccount() {
         const errors = validateForm();

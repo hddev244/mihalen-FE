@@ -1,6 +1,6 @@
 import Message from '@/components/Common/alert-message';
 import { getImage } from '@/lib/imageUtil';
-import { Category, Image, MessageType, Product } from '@/lib/object';
+import { Category, Image as IMG, MessageType, Product } from '@/lib/object';
 import { Localstorage } from '@/lib/store';
 import { BASE_API_URL } from '@/api/api-info';
 import { Button, Card, Input, Select, SelectItem, Skeleton, Textarea } from '@nextui-org/react';
@@ -8,21 +8,25 @@ import React, { ChangeEvent, use, useEffect, useState } from 'react';
 import { BiReset, BiSave } from 'react-icons/bi';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { RiImageAddFill } from 'react-icons/ri';
+import Image from 'next/image';
 
 function ProductEdit(
     { data }: { data: Product }
 ) {
     const [product, setProduct] = useState<Product>(data);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [file, setFile] = useState<File | null>(null);
+    // const [file, setFile] = useState<File | null>(null);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState<MessageType>("success");
-    const [token, setToken] = useState("");
-    const [images, setImages] = useState<Image[]>(data.images || []);
+    const [images, setImages] = useState<IMG[]>(data.images || []);
 
     // Get categories
     useEffect(() => {
+        const token = localStorage.getItem(Localstorage.TOKEN);
+        if (!token) {
+            return;
+        }
         const fetchData = async () => {
             try {
                 const fetchUrl = `${BASE_API_URL}/api/admin/categories`;
@@ -43,6 +47,10 @@ function ProductEdit(
     }, []);
 
     useEffect(() => {
+        const token = localStorage.getItem(Localstorage.TOKEN);
+        if (!token) {
+            return;
+        }
         const fetchData = async () => {
             try {
                 const fetchUrl = `${BASE_API_URL}/api/product/findById/${product.id}`;
@@ -69,7 +77,7 @@ function ProductEdit(
             }, 2000);
         };
         fetchData();
-    }, []);
+    },[product.id]);
 
     // validate form
     const validateForm = (): { name?: string; price?: string; description?: string; category?: string } => {
@@ -93,7 +101,6 @@ function ProductEdit(
         const token = localStorage.getItem(Localstorage.TOKEN);
         console.log(token);
         if (token) {
-            setToken(token);
             console.log(product);
             if (product.name === "" || product.price === 0 || product.description === "" || product.category?.id === "") {
                 setMessage("Please fill in all fields");
@@ -195,6 +202,10 @@ function ProductEdit(
     // Change file
     function changeFile(e: ChangeEvent<HTMLInputElement>) {
         const files = Array.from(e.target.files || []);
+        const token = localStorage.getItem(Localstorage.TOKEN);
+        if (!token) {
+            return;
+        }
         if (files !== null && files.length > 0) {
             const fetchData = async () => {
                 try {
@@ -297,8 +308,8 @@ function ProductEdit(
                 </div>
                 <div className='grid grid-cols-4 grid-rows-4 gap-2 p-4'>
                     {images && images.map((image, index) => (
-                        <div className='aspect-square border relative'>
-                            {image && <img src={getImage(image.id)} alt='image' className='w-full h-full object-cover' />}
+                        <div key={image.id} className='aspect-square border relative'>
+                            {image && <Image src={getImage(image.id)} alt='image' className='w-full h-full object-cover' />}
                             <button
                                 type='button'
                                 title='Remove image'

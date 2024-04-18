@@ -24,13 +24,14 @@ function Page({ params }: {
             const fetchUrl = `${BASE_API_URL}/api/product/findById/${params.productId}`;
             const res = await fetch(fetchUrl);
             const resData = await res.json();
-            console.log(resData);
             const  product = resData.data;
             setProduct(product);
         }
 
         fetchProduct();
-    }   ,[]);
+    },[params.productId]);
+
+    
     const show = () => {
         setShowView(false);
     }

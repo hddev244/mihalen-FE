@@ -9,6 +9,7 @@ import { BiReset, BiSave } from "react-icons/bi";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { RiImageAddFill } from "react-icons/ri";
+import Image from "next/image";
 
 function CategoryForm() {
     const [id, setId] = useState("")
@@ -188,7 +189,7 @@ function CategoryForm() {
                 <div className='grid grid-cols-4 gap-2 p-4'>
                    {thumbnail && 
                          <div className='aspect-square border bg-slate-200 relative'>
-                            <img src={URL.createObjectURL(thumbnail)} alt='image' className='w-full h-full object-cover' />
+                            <Image src={URL.createObjectURL(thumbnail)} alt='image' className='w-full h-full object-cover' />
                          <button
                             // onClick={() => {
                             //     const newFiles = files.filter((f, i) => i !== index);

@@ -6,12 +6,13 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
-import { Image } from '@/lib/object';
+import { Image as IMG } from '@/lib/object';
 import { getImage } from '@/lib/imageUtil';
+import Image from 'next/image';
 
 interface Props {
     className?: string;
-    images: Image[];
+    images: IMG[];
 }
 
 function ProductDetailCarousel(props: Props) {
@@ -19,7 +20,7 @@ function ProductDetailCarousel(props: Props) {
   
     return (
         <>
-        <div className='space-y-4 md:p-8 pt-0 w-full'>
+        <div className='space-y-4 md:p-8 pt-0 w-full '>
             <div className='w-full'>
                 <Swiper
                   loop={true}
@@ -27,11 +28,15 @@ function ProductDetailCarousel(props: Props) {
                   navigation={true}
                   thumbs={{ swiper: thumbsSwiper }}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  className="mySwiper2"
+                  className="mySwiper2 aspect-square"
                 > 
                 {props.images.map((image) => (
                     <SwiperSlide key={image.id} className=''>
-                    <img src={getImage(image.id)} />
+                    <Image 
+                    width={500}
+                    height={500}
+                    alt={image.name} src={getImage(image.id)} 
+                    className='aspect-square' />
                   </SwiperSlide>))
                 }
     
@@ -52,9 +57,14 @@ function ProductDetailCarousel(props: Props) {
                 >
                   {props.images.map((image) => (
                     <SwiperSlide key={image.id} className=''>
-                    <img src={getImage(image.id)} />
-                  </SwiperSlide>))
-                }
+                      <Image 
+                        width={500}
+                        height={500}
+                        className='aspect-square object-cover' 
+                        src={getImage(image.id)} 
+                        alt={image.name} />
+                    </SwiperSlide>
+                  ))}
                 </Swiper>
             </div>
         </div>

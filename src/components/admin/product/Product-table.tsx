@@ -8,6 +8,7 @@ import { BASE_API_URL } from "../../../api/api-info";
 import { FaDeleteLeft } from "react-icons/fa6";
 import ProductEdit from "./product-edit/ProductEdit";
 import { getImage } from "@/lib/imageUtil";
+import Image from "next/image";
 
 function ProductTable() {
     const [products, setProducts] = useState<Product[]>();
@@ -16,7 +17,6 @@ function ProductTable() {
     const [totalPages, setTotalPages] = useState(0);
     const [accountEditting, setAccountEditting] = useState("");
     const [checkDelete, setCheckDelete] = useState(true)
-    const [token, setToken] = useState("");
     const [message, setMessage] = useState<string>();
     const [showMessage, setShowMessage] = useState(false);
     const [product, setProduct] = useState<Product>();
@@ -38,11 +38,10 @@ function ProductTable() {
                 const fetchData = async (retry = 3) => {
                     try {
                         const url = `${BASE_API_URL}/api/product/pages?index=${currentPage - 1}&size=${pageSize}`;
-                        setToken(`Bearer ${storedToken}`);
                         const response = await fetch(url, {
                             method: "GET",
                             headers: {
-                                "Authorization": token,
+                                "Authorization": storedToken,
                             }
                         });
                         if (response.ok) {
@@ -87,6 +86,8 @@ function ProductTable() {
 
     const handleDelete = async (id: number) => {
         const url = `${BASE_API_URL}/api/product/${id}`;
+        const token = localStorage.getItem(Localstorage.TOKEN);
+        if(!token) return;
         try {
             const response = await fetch(url, {
                 method: "DELETE",
@@ -168,7 +169,7 @@ function ProductTable() {
                                                     <TableCell>{formatDate(product.createDate) || ""}</TableCell>
                                                     <TableCell>{formatDate(product.modifiDate) || ""}</TableCell>
                                                     <TableCell>
-                                                        {product.thumbnail && <img 
+                                                        {product.thumbnail && <Image 
                                                                             src={product.thumbnail.id?getImage(product.thumbnail.id):""}
                                                                             alt={product.name}
                                                                             style={{ width: "70px", height: "70px" }}

@@ -39,7 +39,7 @@ const ProductByCategoryPage = ({params} : {
           }
         };
         fetchData();
-}, []);
+}, [params.categoryId]);
 const [showFilter, setShowFilter] = useState(false);
    
 const changeShowFilter = () => {

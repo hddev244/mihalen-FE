@@ -8,6 +8,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { BiReset, BiSave } from "react-icons/bi";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { RiImageAddFill } from "react-icons/ri";
+import Image from "next/image";
 
 
 function FormCreateProduct() {
@@ -15,7 +16,7 @@ function FormCreateProduct() {
         name: "",
         price: 0,
         description: "",
-        category: { id: "", name: ""},
+        category: { id: "", name: "" },
     });
     const [categories, setCategories] = useState<Category[]>([]);
     const [files, setFiles] = useState<File[]>([]);
@@ -25,34 +26,18 @@ function FormCreateProduct() {
     const [messageType, setMessageType] = useState<MessageType>("success");
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const t = localStorage.getItem(Localstorage.TOKEN);
-            if (t) { // Kiểm tra nếu token tồn tại trước khi gửi yêu cầu 
-                setToken(t);
-                const fetchData = async () => {
-                    try {
-                        const url = `${BASE_API_URL}/api/admin/categories`;
-                        const response = await fetch(url, {
-                            method: "GET",
-                            headers: {
-                                "Authorization": t,
-                            }
-                        });
-                        const responseData = await response.json();
-                        setCategories(responseData.data);
-                        console.log(responseData);
-                    } catch (error) {
-                        console.log(error);
-                    }
-                };
-                fetchData();
-            }
-        }
+        const fetchCategories = async () => {
+            const res = await fetch(`${BASE_API_URL}/api/admin/categories/pages?index=0&size=10`);
+            const jsonData = await res.json();
+            setCategories(jsonData.data.content);
+            console.log(jsonData.data.content);
+        };
+        fetchCategories();
     }, []);
 
     const handleCreate = () => {
-      
-        if(product.name === "" || product.price === 0 || product.description === "" || product.category.id === ""){ 
+
+        if (product.name === "" || product.price === 0 || product.description === "" || product.category.id === "") {
             setMessage("Please fill in all fields");
             setMessageType("error");
             setShowMessage(true);
@@ -73,7 +58,7 @@ function FormCreateProduct() {
         for (let i = 0; i < files.length; i++) {
             formData.append("imageFile", files[i]);
         }
-        
+
         let data = new FormData();
         const fetchData = async () => {
             try {
@@ -81,8 +66,8 @@ function FormCreateProduct() {
                 const response = await fetch(fetchUrl, {
                     method: "POST",
                     headers: {
-                        Authorization: token ,
-                        
+                        Authorization: token,
+
                     },
                     body: formData,
                 });
@@ -140,7 +125,7 @@ function FormCreateProduct() {
         const newFiles = Array.from(e.target.files || []);
         if (newFiles) {
             console.log([...newFiles]);
-            setFiles([...files,...newFiles]);
+            setFiles([...files, ...newFiles]);
         }
 
     }
@@ -167,14 +152,14 @@ function FormCreateProduct() {
                         placeholder="Enter product name" />
                     <Input variant="bordered"
                         type="text" size="lg"
-                        onChange={(e) => setProduct({ ...product, price: parseInt(e.target.value) || 0})}
+                        onChange={(e) => setProduct({ ...product, price: parseInt(e.target.value) || 0 })}
                         value={product.price.toString()} // Convert the number to a string
                         isRequired
                         label="Price"
                         errorMessage={validateForm().price}
                         placeholder="Enter price" />
                     <Select
-                        onChange={(e) => {handleChangeCategory(e);}}
+                        onChange={(e) => { handleChangeCategory(e); }}
                         variant="bordered"
                         color="default"
                         label="Category"
@@ -182,13 +167,13 @@ function FormCreateProduct() {
                         errorMessage={validateForm().category}
                     >
                         {categories.map((category) => (
-                            <SelectItem 
+                            <SelectItem
                                 key={category.id} value={category.id}>
                                 {category.name}
                             </SelectItem>
                         ))}
                     </Select>
-                    
+
                     <Textarea variant="bordered"
                         type="text"
                         size="lg"
@@ -209,26 +194,26 @@ function FormCreateProduct() {
                     </div>
                 </div>
                 <div className='grid grid-cols-4 gap-2 p-4'>
-                   {files && files.map((file, index) => (
-                         <div className='aspect-square border bg-slate-200 relative'>
-                            <img src={URL.createObjectURL(file)} alt='image' className='w-full h-full object-cover' />
-                         <button
-                            type='button'
-                            onClick={() => {
-                                const newFiles = files.filter((f, i) => i !== index);
-                                setFiles(newFiles);
-                            }}
-                            className='absolute right-2 top-2'><IoCloseCircleOutline /></button>
-                     </div>
-                     ))}
+                    {files && files.map((file, index) => (
+                        <div key={index} className='aspect-square border bg-slate-200 relative'>
+                            <Image src={URL.createObjectURL(file)} alt='image' className='w-full h-full object-cover' />
+                            <button
+                                type='button'
+                                onClick={() => {
+                                    const newFiles = files.filter((f, i) => i !== index);
+                                    setFiles(newFiles);
+                                }}
+                                className='absolute right-2 top-2'><IoCloseCircleOutline /></button>
+                        </div>
+                    ))}
                     <div className='aspect-square border text-7xl text-gray-600 flex items-center justify-center'>
-                    <input 
-                        multiple
-                        onChange={(e) => {changeFile(e)}} 
-                        accept="image/*"
-                        type='file' id='imagesPro' 
-                        className='hidden' />
-                    <label className='hover:cursor-pointer ' htmlFor="imagesPro"><RiImageAddFill /></label>
+                        <input
+                            multiple
+                            onChange={(e) => { changeFile(e) }}
+                            accept="image/*"
+                            type='file' id='imagesPro'
+                            className='hidden' />
+                        <label className='hover:cursor-pointer ' htmlFor="imagesPro"><RiImageAddFill /></label>
                     </div>
                 </div>
             </form>

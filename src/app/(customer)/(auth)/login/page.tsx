@@ -7,8 +7,9 @@ import { Localstorage } from "@/lib/store";
 import { BASE_API_URL } from "@/api/api-info";
 import { RedirectType, redirect, useRouter } from "next/navigation";
 
+import type { NextPage } from "next";
 
-export function LoginPage() {
+const LoginPage:NextPage = () => {
     const [selected, setSelected] = useState("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
