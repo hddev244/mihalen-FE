@@ -1,10 +1,7 @@
+import { NextPage } from "next";
 
 
-function Page({params}:{
-    params:{
-        productId:string
-    }
-}) {
+const Page:NextPage<{params:{productId:string}}> = (props) =>  {
 return (
     <>
     </>

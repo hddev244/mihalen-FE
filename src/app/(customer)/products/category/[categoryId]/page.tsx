@@ -5,6 +5,7 @@ import AsideFilter from '@/components/products/Aside-filter';
 import { getImage } from '@/lib/imageUtil';
 import { Product } from '@/lib/object';
 import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react';
+import { NextPage } from 'next';
 import { copyTracedFiles } from 'next/dist/build/utils';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -12,14 +13,13 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { MdNavigateNext } from 'react-icons/md';
 
-const ProductByCategoryPage = ({params} : {
-    params: {
+interface ProductByCategoryProps {
         categoryId: string;
         category_name: string;
-    }
-}) => {
-    const par = useParams();
-    console.log(par);
+}
+
+const ProductByCategoryPage:NextPage<{params :ProductByCategoryProps}> = (props) => {
+    const { params } = props;
     const [products, setProducts] = useState<Product[]>();
     useEffect(() => {
         const fetchData = async (retry = 3) => {
@@ -32,7 +32,6 @@ const ProductByCategoryPage = ({params} : {
               if (response.ok) {
                   const responseData = await response.json();
                   setProducts(responseData.data.content);
-                  console.log(responseData);
               } else {
               }
           } catch (error) {
@@ -43,7 +42,6 @@ const ProductByCategoryPage = ({params} : {
 const [showFilter, setShowFilter] = useState(false);
    
 const changeShowFilter = () => {
-    console.log(showFilter);
     setShowFilter(!showFilter);
 }
 useEffect(() => {

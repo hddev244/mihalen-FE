@@ -20,8 +20,9 @@ const LoginPage:NextPage = () => {
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState<MessageType>("success");
     const router = useRouter();
-    const token = localStorage.getItem(Localstorage.TOKEN);
 
+    if(typeof window === 'undefined') return null;
+    const token = localStorage.getItem(Localstorage.TOKEN);
     if (token) {
         router.push("/", { scroll: false });
     }

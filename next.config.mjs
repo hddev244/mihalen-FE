@@ -8,7 +8,7 @@ const nextConfig = {
             port: '',
           },
         ],
-        domains: ['116.98.119.57','tomcat.daivo.info.vn'],
+        domains: ['116.98.119.57','tomcat.daivo.info.vn','localhost'],
       },
 };
 

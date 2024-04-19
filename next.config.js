@@ -6,7 +6,12 @@ module.exports = {
           hostname: '116.98.119.57',
           port: '',
         },
+        {
+          protocol: 'http',
+          hostname: 'localhost',
+          port: '',
+        },
       ],
-        domains: ['116.98.119.57','tomcat.daivo.info.vn'],
+        domains: ['116.98.119.57','tomcat.daivo.info.vn','localhost'],
     },
   }

@@ -7,6 +7,7 @@ import { getImage } from "@/lib/imageUtil";
 import { CartItem, MessageType } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 
@@ -22,7 +23,7 @@ interface Order {
 }
 
 
-function OrdersPage() {
+const OrdersPage:NextPage = () => {
   const [orders, setOrders] = useState<Order[]>();
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");

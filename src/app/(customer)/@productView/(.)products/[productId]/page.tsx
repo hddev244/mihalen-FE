@@ -6,22 +6,23 @@ import { formatCurrency } from "@/lib/format";
 import { Product } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
 import { Progress } from "@nextui-org/react";
+import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { BiGift } from "react-icons/bi";
 import { FaFire } from "react-icons/fa";
 
 
+interface ProductDetailProps {
+    productId: number
+}
 
-function Page({ params }: {
-    params: {
-        productId: number
-    }
-}) {
+const ProductPage:NextPage<{params:ProductDetailProps}> = (props) =>{
+    const { params } = props;
     const [showView,setShowView] =useState(true);
     const [product, setProduct] = useState<Product>();
     useEffect(() => {
         const fetchProduct = async (): Promise<void> => {
-            const fetchUrl = `${BASE_API_URL}/api/product/findById/${params.productId}`;
+            const fetchUrl = `${BASE_API_URL}/api/product/${params.productId}`;
             const res = await fetch(fetchUrl);
             const resData = await res.json();
             const  product = resData.data;
@@ -35,11 +36,10 @@ function Page({ params }: {
     const show = () => {
         setShowView(false);
     }
-    return showView && product &&(
+    return showView && product && (
         <>
             <MarkClickToBack />
-            {/* <div className="fixed bg-[#50505056] w-dvw z-[99999] h-dvh top-0 left-0 flex justify-center items-center"> */}
-                <div className="bg-white w-[80%] lg:w-max max-h-[90vh] overflow-y-auto p-4 z-[999999] rounded-lg fixed translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%]">
+                <div className="bg-white  lg:w-[80%] w-[90%] max-h-[90vh] overflow-y-auto p-4 z-[999999] rounded-lg fixed translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%]">
                     <div className="grid grid-cols-1 md:grid-cols-2 ">
                         {/* image  */}
                         <div className="w-full aspect-square">
@@ -105,4 +105,4 @@ function Page({ params }: {
     );
 }
 
-export default Page
+export default ProductPage

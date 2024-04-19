@@ -8,6 +8,7 @@ import { Account } from "@/lib/object";
 import { Localstorage } from "@/lib/store";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import type { NextPage } from "next";
 
 enum TabName {
   ACCOUNTS = "Accounts",
@@ -15,7 +16,7 @@ enum TabName {
   ROLES = "Roles"
 }
 
-function AccountsManagement() {
+const AccountsManagement:NextPage = () => {
 
   const [isLogged, setIsLogged] = useState(true);
   useEffect(() => {

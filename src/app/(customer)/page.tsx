@@ -9,15 +9,11 @@ import { Category, Product } from "@/lib/object";
 import { getImage } from "@/lib/imageUtil";
 import { BASE_API_URL } from "@/api/api-info";
 import React, { useEffect, useState } from "react";
-import { Localstorage } from "@/lib/store";
+import { NextPage } from 'next';
 
 
-
-export default function Home({
-  productView,
-}: Readonly<{
-  productView: React.ReactNode;
-}>) {
+const Home: NextPage = () =>
+{
   const [products, setProducts] = useState<Product[]>();
   const [categories, setCategories] = useState<Category[]>();
   useEffect(() => {
@@ -25,7 +21,6 @@ export default function Home({
       const res = await fetch(`${BASE_API_URL}/api/admin/categories/pages?index=0&size=10`);
       const jsonData = await res.json();
       setCategories(jsonData.data.content);
-      console.log(jsonData.data.content);
     };
     fetchCategories();
   }, []);
@@ -40,7 +35,6 @@ export default function Home({
                   if (response.ok) {
                       const responseData = await response.json();
                       setProducts(responseData.data.content);
-                      console.log(responseData);
                   } else {
                   }
               } catch (error) {
@@ -50,7 +44,6 @@ export default function Home({
 }, []);
   return (
     <>
-    {productView}
       <HomeSlider></HomeSlider>
       { /**Danh mục sản phẩm*/}
       <div className="lg:w-max m-auto">
@@ -136,3 +129,5 @@ export default function Home({
     </>
   );
 }
+
+export default Home;

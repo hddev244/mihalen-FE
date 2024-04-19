@@ -45,7 +45,7 @@ let order: Order = {
     cartItemID: []
 }
 
-function CartPage() {
+const CartPage:NextPage = () => {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [districts, setDistricts] = useState<District[]>([]);
     const [wards, setWards] = useState<Ward[]>([]);

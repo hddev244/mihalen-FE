@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/format";
 import { Product } from "@/lib/object";
 import { Progress } from "@nextui-org/react";
 import { all } from "axios";
+import { NextPage } from "next";
 import Link from "next/link";
 import { BiGift } from "react-icons/bi";
 import { FaFire } from "react-icons/fa";
@@ -22,16 +23,16 @@ let product: Product = {
     name: "",
 };
 
-function Page({ params }: {
-    params: {
-        productId: number
-    }
-}) {
+interface ProductDetailProps {
+    productId: number
+}
+
+const Page:NextPage<{params:ProductDetailProps}> = (props) =>{
+    const { params } = props;
     const fetchProduct = async (): Promise<void> => {
-        const fetchUrl = `${BASE_API_URL}/api/product/findById/${params.productId}`;
+        const fetchUrl = `${BASE_API_URL}/api/product/${params.productId}`;
         const res = await fetch(fetchUrl);
         const resData = await res.json();
-        console.log(resData);
         product = resData.data;
     }
 

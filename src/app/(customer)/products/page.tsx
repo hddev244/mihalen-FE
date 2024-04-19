@@ -8,10 +8,6 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { MdNavigateNext } from 'react-icons/md';
 
-
-interface ProductPageProps {
-    product: Product;
-}
 let products: Product[] = [];
 const fetchData = async () => {
     try {
@@ -22,7 +18,6 @@ const fetchData = async () => {
       if (response.ok) {
           const responseData = await response.json();
            products = responseData.data.content;
-          console.log(responseData);
       } else {
       }
   } catch (error) {
@@ -31,7 +26,6 @@ const fetchData = async () => {
 fetchData();
 
 const ProductPage: NextPage = () => {
-
 return (
     <div className='px-2'>
         <ol className='flex items-center text-xl font-medium my-6'>

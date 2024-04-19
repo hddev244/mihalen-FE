@@ -6,10 +6,11 @@ import FormCreateProduct from "@/components/admin/product/Form-create";
 import ProductTable from "@/components/admin/product/Product-table";
 import { Localstorage } from "@/lib/store";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
+import { NextPage } from "next";
 import { useEffect, useState } from "react";
 
 
-function ProductsManagement() {
+const ProductsManagement:NextPage = () => {
   const [isLogged, setIsLogged] = useState(true);
   useEffect(() => {
     if (typeof window !== 'undefined') {

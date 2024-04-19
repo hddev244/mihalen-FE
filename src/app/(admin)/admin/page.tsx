@@ -1,7 +1,8 @@
 "use client"
+import { NextPage } from "next";
 import Main from "./main/page";
 
-function AdminPage() {
+const AdminPage:NextPage = () => {
   return (
     <Main></Main>
   )
