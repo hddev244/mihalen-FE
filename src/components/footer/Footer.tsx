@@ -3,9 +3,9 @@ import type { NextPage } from "next";
 const Footer: NextPage = () => {
   return (
     <>
-    <footer>
+    <footer className="">
       <div className="bg-themeColor text-white p-4 lg:py-10">
-        <div className="container w-max mx-auto">
+        <div className="container lg:w-max mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <h3 className="text-2xl font-bold">Mihalen</h3>

@@ -4,7 +4,6 @@ import AddToCartAndBuynow, { MarkClickToBack } from "@/components/Common/SetQuan
 import ProductDetailCarousel from "@/components/products/Product-Detail-Carousel";
 import { formatCurrency } from "@/lib/format";
 import { Product } from "@/lib/object";
-import { Localstorage } from "@/lib/store";
 import { Progress } from "@nextui-org/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";

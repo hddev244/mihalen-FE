@@ -13,8 +13,8 @@ const Header: NextPage = () => {
 	}
 	return (
 		<>
-			<header className="bg-white h-16 w-full fixed top-0 left-0 z-[9999] p-2 border-b border-gray-200 shadow-sm">
-				<div className="mx-auto flex justify-between items-center h-full lg:w-max  lg:gap-4 ">
+			<header className="bg-white h-16 fixed top-0 left-0 z-[9999]  lg:w-max  p-2 border-b border-gray-200 shadow-sm">
+				<div className="mx-auto w-full flex justify-between items-center h-full lg:gap-4 ">
 					<button
 						onClick={() => {
 							setIsMenuOpen(true);
